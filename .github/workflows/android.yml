@@ -22,16 +22,20 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
 
+    - name: Print current working directory
+      run: pwd
+
+    - name: List files in current directory
+      run: ls -la
+
     - name: Clean build directory
+      # This step might be failing. We need the error message.
       run: ./gradlew clean
 
     - name: Run Unit Tests
-      # Using testDebugUnitTest explicitly runs tests for the debug build type.
-      # The --info flag provides more detailed output for debugging.
       run: ./gradlew testDebugUnitTest --info
 
     - name: Publish Test Results
-      # This action uploads JUnit test results for better visualization in GitHub Actions.
       uses: actions/upload-artifact@v4
       with:
         name: unit-test-results
@@ -41,7 +45,6 @@ jobs:
       run: ./gradlew lint
 
     - name: Publish Lint Report
-      # This action uploads the lint report for review.
       uses: actions/upload-artifact@v4
       with:
         name: lint-report
@@ -51,7 +54,6 @@ jobs:
       run: ./gradlew build
 
     - name: Publish Build Report
-      # This action uploads the build report for review.
       uses: actions/upload-artifact@v4
       with:
         name: build-report
