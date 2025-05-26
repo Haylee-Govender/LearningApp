@@ -1,5 +1,6 @@
 package com.example.studyapp
 
+import android.content.ContentValues.TAG
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -8,7 +9,7 @@ import androidx.core.view.WindowInsetsCompat
 import android.widget.Button
 import android.widget.TextView
 import android.content.Intent
-
+import android.util.Log
 
 
 class questionPage : AppCompatActivity() {
@@ -61,6 +62,7 @@ class questionPage : AppCompatActivity() {
         // Button true clicked
         btnTrue.setOnClickListener {
             //Checking input
+            Log.d(TAG, "True button clicked")
             checkAnswer(true, tvFeedback)
             btnTrue.isEnabled = false
             btnFalse.isEnabled = false
@@ -69,12 +71,14 @@ class questionPage : AppCompatActivity() {
         // Button false clicked
         btnFalse.setOnClickListener {
             //Checking input
+            Log.d(TAG, "False button clicked")
             checkAnswer(false, tvFeedback)
             btnTrue.isEnabled = false
             btnFalse.isEnabled = false
         }
         // Button next clicked
         btnNext.setOnClickListener {
+            Log.d(TAG, "Next button clicked")
             //IF statement used to go to the next question and end test once done
             if (index < questions.size - 1) {
                 //Increasing index

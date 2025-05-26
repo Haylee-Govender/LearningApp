@@ -1,6 +1,8 @@
 package com.example.studyapp
 
+import android.content.ContentValues.TAG
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -47,6 +49,7 @@ class ScorePage : AppCompatActivity() {
         // ai assisted code
         // Review button clicked
         btnReview.setOnClickListener {
+            Log.d(TAG, "Review button clicked")
             val builder = StringBuilder()
             // Loop through all questions using their indices
             for (i in questions.indices) {
