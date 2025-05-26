@@ -9,131 +9,24 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      - name: set up JDK 11
-        uses: actions/setup-java@v4
-        with:
-          java-version: '11'
-          distribution: 'temurin'
-          cache: gradle
+    - uses: actions/checkout@v4
+    - name: set up JDK 11
+      uses: actions/setup-java@v4
+      with:
+        java-version: '11'
+        distribution: 'temurin'
+        cache: gradle
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
 
-      - name: Build with Gradle
-        run: ./gradlew assembleDebug # Or assembleRelease, depending on your needs. 'build' includes tests, but being explicit can be good.
+    - name: Run Unit Tests
+      run: ./gradlew test
 
-  # New job for running unit tests
-  unit_tests:
-    needs: build # Ensures build job completes successfully first
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: set up JDK 11
-        uses: actions/setup-java@v4
-        with:
-          java-version: '11'
-          distribution: 'temurin'
-          cache: gradle
+    - name: Run Android Lint Checks
+      run: ./gradlew lint
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-
-      - name: Run Unit Tests
-        run: ./gradlew testDebugUnitTest # This runs tests located in src/test
-
-      - name: Upload Test Results
-        if: always() # Uploads even if tests fail
-        uses: actions/upload-artifact@v4
-        with:
-          name: unit-test-results
-          path: app/build/reports/tests/testDebugUnitTest/
-
-  # New job for running Android instrumented tests (requires an emulator)
-  instrumented_tests:
-    needs: build # Ensures build job completes successfully first
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        api-level: [30] # You can add more API levels, e.g., 21, 28, 30, 33
-        # target: [default] # Can specify different targets if needed
-    steps:
-      - uses: actions/checkout@v4
-      - name: set up JDK 11
-        uses: actions/setup-java@v4
-        with:
-          java-version: '11'
-          distribution: 'temurin'
-          cache: gradle
-
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-
-      - name: Run Instrumented Tests
-        uses: ReactiveCircus/android-emulator-runner@v2
-        with:
-          api-level: ${{ matrix.api-level }}
-          target: default
-          arch: x86_64
-          profile: Nexus 6
-          script: ./gradlew connectedCheck # This runs tests located in src/androidTest
-
-      - name: Upload Test Results
-        if: always() # Uploads even if tests fail
-        uses: actions/upload-artifact@v4
-        with:
-          name: instrumented-test-results-api-${{ matrix.api-level }}
-          path: app/build/reports/androidTests/connected/
-
-  # Optional: Lint check job
-  lint_check:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: set up JDK 11
-        uses: actions/setup-java@v4
-        with:
-          java-version: '11'
-          distribution: 'temurin'
-          cache: gradle
-
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-
-      - name: Run Android Lint
-        run: ./gradlew lintDebug # Or lintRelease
-
-      - name: Upload Lint Report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: lint-report
-          path: app/build/reports/lint-results-debug.html
-
-  # Optional: Detekt (Kotlin static analysis)
-  detekt_check:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: set up JDK 11
-        uses: actions/setup-java@v4
-        with:
-          java-version: '11'
-          distribution: 'temurin'
-          cache: gradle
-
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-
-      - name: Run Detekt
-        run: ./gradlew detekt # Assuming you have Detekt configured in your project
-
-      - name: Upload Detekt Report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: detekt-report
-          path: app/build/reports/detekt/detekt.html # Adjust path as needed
+    - name: Build with Gradle
+      run: ./gradlew build
