@@ -29,8 +29,8 @@ jobs:
       run: ls -la
 
     - name: Clean build directory
-      # This step might be failing. We need the error message.
-      run: ./gradlew clean
+      # Added --stacktrace for more detailed error output
+      run: ./gradlew clean --stacktrace
 
     - name: Run Unit Tests
       run: ./gradlew testDebugUnitTest --info
@@ -58,3 +58,4 @@ jobs:
       with:
         name: build-report
         path: app/build/reports/
+
