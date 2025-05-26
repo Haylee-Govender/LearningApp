@@ -22,11 +22,37 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
 
+    - name: Clean build directory
+      run: ./gradlew clean
+
     - name: Run Unit Tests
-      run: ./gradlew test
+      # Using testDebugUnitTest explicitly runs tests for the debug build type.
+      # The --info flag provides more detailed output for debugging.
+      run: ./gradlew testDebugUnitTest --info
+
+    - name: Publish Test Results
+      # This action uploads JUnit test results for better visualization in GitHub Actions.
+      uses: actions/upload-artifact@v4
+      with:
+        name: unit-test-results
+        path: app/build/reports/tests/debugUnitTest/
 
     - name: Run Android Lint Checks
       run: ./gradlew lint
 
+    - name: Publish Lint Report
+      # This action uploads the lint report for review.
+      uses: actions/upload-artifact@v4
+      with:
+        name: lint-report
+        path: app/build/reports/lint-results-debug.html
+
     - name: Build with Gradle
       run: ./gradlew build
+
+    - name: Publish Build Report
+      # This action uploads the build report for review.
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-report
+        path: app/build/reports/
